@@ -1,22 +1,26 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.wsgi import get_wsgi_application
 from django.views.decorators.http import etag
+from django.shortcuts import render
 from django.conf.urls import url
 from django import forms
 from django.conf.urls import url
+from django.conf import settings
+
 from io import BytesIO
 from PIL import Image, ImageDraw
+
 import os
 import hashlib
 import sys
-
-from django.conf import settings
 
 DEBUG = os.environ.get('DEBUG', 'on') == 'on'
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'test')
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(',')
+
+BASE_DIR = os.path.dirname(__file__)
 
 settings.configure(
     DEBUG=DEBUG,
@@ -28,6 +32,19 @@ settings.configure(
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     ),
+    INSTALLED_APPS=(
+        'django.contrib.staticfiles',
+    ),
+    TEMPLATES=(
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': (os.path.join(BASE_DIR, 'templates'), ),
+        },
+    ),
+    STATICFILES_DIRS=(
+        os.path.join(BASE_DIR, 'static'),
+    ),
+    STATIC_URL='/static/',
 )
 
 # Create form for image size validation
@@ -71,7 +88,7 @@ def placeholder(request, width, height):
 
 def index(request):
     """ Homepage detailing how our app works """
-    return HttpResponse('Hello World')
+    return render(request, 'home.html')
 
 
 urlpatterns = (
