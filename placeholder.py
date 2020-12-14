@@ -52,7 +52,11 @@ class ImageForm(forms.Form):
         content.seek(0)
         return content
 
-
+def generate_etag(request, width, height):
+    content = f"Placeholder: {width} x {height}"
+    return hashlib.sha1(content.encode('utf-8')).hexdigest()
+    
+@etag(generate_etag)
 def placeholder(request, width, height):
     form = ImageForm({'height': height, 'width': width})
     if form.is_valid():
