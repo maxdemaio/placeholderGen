@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.core.wsgi import get_wsgi_application
 from django.views.decorators.http import etag
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 from django.conf.urls import url
 from django import forms
 from django.conf.urls import url
@@ -88,7 +89,12 @@ def placeholder(request, width, height):
 
 def index(request):
     """ Homepage detailing how our app works """
-    return render(request, 'home.html')
+    # Provide an example for homepage
+    example = reverse('placeholder', kwargs={'width': 50, 'height': 50})
+    context = {
+        'example': request.build_absolute_uri(example)
+    }
+    return render(request, 'home.html', context)
 
 
 urlpatterns = (
